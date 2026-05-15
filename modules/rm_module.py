@@ -1,8 +1,9 @@
 from PySide6.QtCore import Qt, QRectF
-from PySide6.QtGui import QPen, QColor
+from PySide6.QtGui import QPen, QColor, QBrush
 
 from constants import MODULE_W, MODULE_H, ModuleKind
 from modules.base_module import BaseModule
+import math
 
 
 class RMModule(BaseModule):
@@ -10,12 +11,34 @@ class RMModule(BaseModule):
         super().__init__(col, row, ModuleKind.RM)
         self.name = "RM"
 
+    def draw_slot_on_line(self, painter, x1, y1, x2, y2, t=0.5, w=24, h=5):
+        x = x1 + (x2 - x1) * t
+        y = y1 + (y2 - y1) * t
+
+        angle = math.degrees(math.atan2(y2 - y1, x2 - x1))
+
+        painter.save()
+        painter.translate(x, y)
+        painter.rotate(angle)
+
+        painter.setPen(QPen(QColor("black"), 1))
+        painter.setBrush(QBrush(QColor("white")))
+        painter.drawRoundedRect(
+            QRectF(-w / 2, -h / 2, w, h),
+            2,
+            2
+        )
+
+        painter.restore()
+
     def draw_module(self, painter):
         y = MODULE_H / 2
 
-        painter.setPen(QPen(QColor("black"), 12, Qt.SolidLine, Qt.SquareCap))
-        painter.drawLine(0, y, 30, y)
-        painter.drawLine(90, y, MODULE_W, y)
+        # vía
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(QBrush(QColor("black")))
+        painter.drawRect(QRectF(0, y - 5, MODULE_W, 10))
 
-        painter.setPen(QPen(QColor("#0044cc"), 4))
-        painter.drawText(QRectF(0, 0, MODULE_W, MODULE_H), Qt.AlignCenter, "RM")
+        # sensores / retroseñalización
+        self.draw_slot_on_line(painter, 0, y, MODULE_W, y, t=0.25)
+        self.draw_slot_on_line(painter, 0, y, MODULE_W, y, t=0.75)
