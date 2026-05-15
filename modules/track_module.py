@@ -13,5 +13,7 @@ class TrackModule(BaseModule):
     def draw_module(self, painter):
         y = MODULE_H / 2
 
+        painter.setBrush(QBrush(QColor("black")))
+        painter.drawRect(QRectF(0, y - 5, MODULE_W, 10))
+
         painter.setPen(QPen(QColor("black"), 10, Qt.SolidLine, Qt.SquareCap))
-        painter.drawLine(0, y, MODULE_W-5, y)
