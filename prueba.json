@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "type": "loconet_planning",
+  "modules": [
+    {
+      "kind": "SIGNAL",
+      "col": 21,
+      "row": 10,
+      "name": "E1",
+      "direction": "LEFT_TO_RIGHT",
+      "profile_key": "signal",
+      "lncv_values": {
+        "module_addr": 1,
+        "signal_addr_1": 4,
+        "signal_addr_2": 5,
+        "signal_addr_3": 6,
+        "signal_type": 7,
+        "signal_group": 0
+      },
+      "signal_name": "Verde/Rojo/Amarillo/Blanco",
+      "signal_colors": [
+        "green",
+        "red",
+        "yellow",
+        "white"
+      ],
+      "signal_style": "normal"
+    }
+  ]
+}

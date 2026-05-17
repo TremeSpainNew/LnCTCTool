@@ -10,6 +10,15 @@ class ButtonModule(BaseModule):
     def __init__(self, col, row):
         super().__init__(col, row, ModuleKind.BUTTON)
         self.name = "B"
+        self.profile_key = "button"
+        self.lncv_values = {
+            "module_addr": 1,
+
+            "button_id": 1,
+            "target_module": 1,
+
+            "action_type": 0,   # press / long / double
+        }
 
     def draw_slot_on_line(self, painter, x1, y1, x2, y2, t=0.5, w=24, h=5):
         x = x1 + (x2 - x1) * t

@@ -10,6 +10,15 @@ class RMModule(BaseModule):
     def __init__(self, col, row):
         super().__init__(col, row, ModuleKind.RM)
         self.name = "RM"
+        self.profile_key = "rm"
+        self.lncv_values = {
+            "module_addr": 1,
+
+            "sensor_1": 1,
+            "sensor_2": 2,
+
+            "rm_type": 0,
+        }
 
     def draw_slot_on_line(self, painter, x1, y1, x2, y2, t=0.5, w=24, h=5):
         x = x1 + (x2 - x1) * t

@@ -1,0 +1,8 @@
+{
+  "bridge_host": "127.0.0.1",
+  "bridge_port": 5555,
+  "mode": "tcp",
+  "tcp_ip": "192.168.0.123",
+  "tcp_port": 1234,
+  "com_port": "COM3"
+}

@@ -2,126 +2,163 @@ from PySide6.QtWidgets import QMenu
 from PySide6.QtCore import Qt, QPointF, QRectF
 from PySide6.QtGui import QPen, QColor, QBrush
 
-from constants import MODULE_W, MODULE_H, ModuleKind, TurnoutVariant, Direction
+from constants import MODULE_W, MODULE_H, ModuleKind, TurnoutVariant
 from modules.base_module import BaseModule
 from config_dialog import ModuleConfigDialog
 import math
 
 
 class TurnoutModule(BaseModule):
-    def __init__(self, col, row, crossed=False):
-        kind = ModuleKind.CROSS_TURNOUT if crossed else ModuleKind.TURNOUT
-        super().__init__(col, row, kind)
+    def __init__(self, col, row):
+        super().__init__(col, row, ModuleKind.TURNOUT)
 
-        self.name = "D"
-        self.crossed = crossed
-        self.variant = TurnoutVariant.L_UP
+        self.name = "A"
+        self.profile_key = "turnout"
+        self.lncv_values = {
+            "module_addr": 1,
+        
+            "turnout_addr_1": 10,
+            "turnout_addr_2": 11,
+        
+            "type": 0,
+            "invert_dir": 0,
+            "invert_fb": 0,
+            "has_feedback": 1,
+        }
+        self.variant = TurnoutVariant.LEFT_UP
 
     def draw_module(self, painter):
-        if self.crossed:
+        if self.variant == TurnoutVariant.CROSS:
             self.draw_cross(painter)
         else:
             self.draw_turnout(painter)
 
     def get_branches(self):
-        v = self.variant
+        if self.variant == TurnoutVariant.LEFT_UP:
+            return ["up"], []
 
-        if v == TurnoutVariant.L_UP:
-            return "up", None
-        if v == TurnoutVariant.L_UP_R_DOWN:
-            return "up", "down"
-        if v == TurnoutVariant.L_DOWN:
-            return "down", None
-        if v == TurnoutVariant.L_DOWN_R_UP:
-            return "down", "up"
+        if self.variant == TurnoutVariant.LEFT_DOWN:
+            return ["down"], []
 
-        if v == TurnoutVariant.R_DOWN:
-            return None, "down"
-        if v == TurnoutVariant.L_UP_R_DOWN_FULL:
-            return "up", "down"
+        if self.variant == TurnoutVariant.RIGHT_UP:
+            return [], ["up"]
 
-        if v == TurnoutVariant.R_UP:
-            return None, "up"
-        if v == TurnoutVariant.L_DOWN_R_UP_FULL:
-            return "down", "up"
+        if self.variant == TurnoutVariant.RIGHT_DOWN:
+            return [], ["down"]
 
-        if v == TurnoutVariant.BOTH_UP_DOWN:
-            return "up", "down"
-        if v == TurnoutVariant.BOTH_DOWN_UP:
-            return "down", "up"
+        if self.variant == TurnoutVariant.LEFT_UP_LEFT_DOWN:
+            return ["up", "down"], []
 
-        return "up", None
+        if self.variant == TurnoutVariant.RIGHT_UP_RIGHT_DOWN:
+            return [], ["up", "down"]
+
+        if self.variant == TurnoutVariant.LEFT_UP_RIGHT_DOWN:
+            return ["up"], ["down"]
+
+        if self.variant == TurnoutVariant.LEFT_DOWN_RIGHT_UP:
+            return ["down"], ["up"]
+
+        if self.variant == TurnoutVariant.DIAGONAL_UP:
+            return ["up", "down"], []
+
+        if self.variant == TurnoutVariant.DIAGONAL_DOWN:
+            return [], ["up", "down"]
+
+        return ["up"], []
 
     def draw_turnout(self, painter):
         y = MODULE_H / 2
         cx = MODULE_W / 2
         cy = MODULE_H / 2
 
-        left_branch, right_branch = self.get_branches()
-
-        if self.direction == Direction.RIGHT_TO_LEFT:
-            left_branch, right_branch = right_branch, left_branch
+        left_branches, right_branches = self.get_branches()
 
         painter.setPen(Qt.NoPen)
 
-        # vía recta horizontal
+        # vía recta
         painter.setBrush(QBrush(QColor("black")))
-        painter.drawRect(QRectF(0, y - 5, MODULE_W, 10))
+        left_count = len(left_branches)
+        right_count = len(right_branches)
+
+        if left_count == 2 and right_count == 0:
+            painter.drawRect(QRectF(cx, y - 5, MODULE_W - cx, 10))
+
+        elif right_count == 2 and left_count == 0:
+            painter.drawRect(QRectF(0, y - 5, cx, 10))
+
+        else:
+            painter.drawRect(QRectF(0, y - 5, MODULE_W, 10))
 
         painter.setPen(QPen(QColor("black"), 10, Qt.SolidLine, Qt.SquareCap))
 
-        margin = 0
-        branch_offset = MODULE_H / 2
+        # ramas izquierdas
+        for branch in left_branches:
+            if branch == "up":
+                x1, y1, x2, y2 = 0, 0, cx, cy
+                painter.drawLine(x1, y1, x2, y2)
+                self.draw_slot_on_line(painter, x1, y1, x2, y2, t=0.38)
 
-        # rama izquierda
-        if left_branch == "up":
-            x1, y1, x2, y2 = 0, 0, cx, cy
-            painter.drawLine(x1, y1, x2, y2)
-            self.draw_slot_on_line(painter, x1, y1, x2, y2, t=0.42)
+            elif branch == "down":
+                x1, y1, x2, y2 = 0, MODULE_H, cx, cy
+                painter.drawLine(x1, y1, x2, y2)
+                self.draw_slot_on_line(painter, x1, y1, x2, y2, t=0.38)
 
-        elif left_branch == "down":
-            x1, y1, x2, y2 = 0, MODULE_H, cx, cy
-            painter.drawLine(x1, y1, x2, y2)
-            self.draw_slot_on_line(painter, x1, y1, x2, y2, t=0.42)
+        # ramas derechas
+        for branch in right_branches:
+            if branch == "up":
+                x1, y1, x2, y2 = cx, cy, MODULE_W, 0
+                painter.drawLine(x1, y1, x2, y2)
+                self.draw_slot_on_line(painter, x1, y1, x2, y2, t=0.62)
 
-        # rama derecha
-        if right_branch == "up":
-            x1, y1, x2, y2 = cx, cy, MODULE_W, 0
-            painter.drawLine(x1, y1, x2, y2)
-            self.draw_slot_on_line(painter, x1, y1, x2, y2, t=0.58)
+            elif branch == "down":
+                x1, y1, x2, y2 = cx, cy, MODULE_W, MODULE_H
+                painter.drawLine(x1, y1, x2, y2)
+                self.draw_slot_on_line(painter, x1, y1, x2, y2, t=0.62)
 
-        elif right_branch == "down":
-            x1, y1, x2, y2 = cx, cy, MODULE_W, MODULE_H
-            painter.drawLine(x1, y1, x2, y2)
-            self.draw_slot_on_line(painter, x1, y1, x2, y2, t=0.58)
+        # sensores vía recta
+        #if left_branches and not right_branches:
+            #self.draw_slot_on_line(painter, 0, y, MODULE_W, y, t=0.22)
+        if left_count == 2 and right_count == 0:
+            return
+        elif right_count == 2 and left_count == 0:
+            return
 
-        # sensor en vía recta
-        self.draw_slot_on_line(painter, 0, y, MODULE_W, y, t=0.20)
-        self.draw_slot_on_line(painter, 0, y, MODULE_W, y, t=0.80)
+        #elif right_branches and not left_branches:
+            #self.draw_slot_on_line(painter, 0, y, MODULE_W, y, t=0.78)
 
-        # círculo central
-        painter.setBrush(QBrush(QColor("#666666")))
-        painter.setPen(QPen(QColor("black"), 1))
-        painter.drawEllipse(QPointF(cx, cy), 10, 10)
+        else:
+            self.draw_slot_on_line(painter, 0, y, MODULE_W, y, t=0.22)
+            self.draw_slot_on_line(painter, 0, y, MODULE_W, y, t=0.78)
+
+        self.draw_center(painter)
 
     def draw_cross(self, painter):
-        cx = MODULE_W / 2
-        cy = MODULE_H / 2
-
         painter.setPen(QPen(QColor("black"), 10, Qt.SolidLine, Qt.SquareCap))
+        left_count = len(left_branches)
+        right_count = len(right_branches)
 
-        margin = 6
-        painter.drawLine(0, 0, MODULE_W, MODULE_H)
-        painter.drawLine(0, MODULE_H, MODULE_W, 0)
+        # diagonal 1
+        x1, y1, x2, y2 = 0, 0, MODULE_W, MODULE_H
+        painter.drawLine(x1, y1, x2, y2)
+        self.draw_slot_on_line(painter, x1, y1, x2, y2, t=0.25)
+        self.draw_slot_on_line(painter, x1, y1, x2, y2, t=0.75)
 
-        self.draw_slot(painter, 25, 18, 24, 5, 28)
-        self.draw_slot(painter, MODULE_W - 25, MODULE_H - 18, 24, 5, 28)
-        self.draw_slot(painter, 25, MODULE_H - 18, 24, 5, -28)
-        self.draw_slot(painter, MODULE_W - 25, 18, 24, 5, -28)
+        # diagonal 2
+        x1, y1, x2, y2 = 0, MODULE_H, MODULE_W, 0
+        painter.drawLine(x1, y1, x2, y2)
+        self.draw_slot_on_line(painter, x1, y1, x2, y2, t=0.25)
+        self.draw_slot_on_line(painter, x1, y1, x2, y2, t=0.75)
 
+        self.draw_center(painter)
+
+    def draw_center(self, painter):
         painter.setBrush(QBrush(QColor("#666666")))
         painter.setPen(QPen(QColor("black"), 1))
-        painter.drawEllipse(QPointF(cx, cy), 11, 11)
+        painter.drawEllipse(
+            QPointF(MODULE_W / 2, MODULE_H / 2),
+            10,
+            10
+        )
 
     def draw_slot_on_line(self, painter, x1, y1, x2, y2, t=0.45, w=24, h=5):
         x = x1 + (x2 - x1) * t
@@ -146,21 +183,12 @@ class TurnoutModule(BaseModule):
     def contextMenuEvent(self, event):
         menu = QMenu()
 
-        if not self.crossed:
-            variant_menu = menu.addMenu("Tipo de desvío")
+        variant_menu = menu.addMenu("Tipo de desvío")
 
-            for variant in TurnoutVariant:
-                act = variant_menu.addAction(variant.value)
-                act.triggered.connect(
-                    lambda checked=False, v=variant: self.set_variant(v)
-                )
-
-        direction_menu = menu.addMenu("Sentido")
-
-        for direction in Direction:
-            act = direction_menu.addAction(direction.value)
+        for variant in TurnoutVariant:
+            act = variant_menu.addAction(variant.value)
             act.triggered.connect(
-                lambda checked=False, d=direction: self.set_direction(d)
+                lambda checked=False, v=variant: self.set_variant(v)
             )
 
         menu.addSeparator()
@@ -178,3 +206,5 @@ class TurnoutModule(BaseModule):
     def set_variant(self, variant):
         self.variant = variant
         self.update()
+        
+    

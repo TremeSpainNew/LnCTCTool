@@ -4,7 +4,7 @@ from PySide6.QtGui import QPen, QColor, QBrush
 
 from constants import GRID_SIZE, MODULE_W, MODULE_H, Direction
 from config_dialog import ModuleConfigDialog
-
+from module_profiles import MODULE_PROFILES
 
 class BaseModule(QGraphicsItem):
     def __init__(self, col, row, kind):
@@ -16,6 +16,8 @@ class BaseModule(QGraphicsItem):
         self.name = kind.value
         self.address = 1
         self.article = 6020
+        self.profile_key = None
+        self.lncv_values = {}
         self.direction = Direction.LEFT_TO_RIGHT
 
         self.setPos(col * GRID_SIZE, row * GRID_SIZE)
@@ -51,7 +53,7 @@ class BaseModule(QGraphicsItem):
         pass
 
     def mouseDoubleClickEvent(self, event):
-        ModuleConfigDialog(self).exec()
+        ModuleConfigDialog(self, self.scene().views()[0].window()).exec()
         super().mouseDoubleClickEvent(event)
 
     def contextMenuEvent(self, event):
@@ -73,13 +75,25 @@ class BaseModule(QGraphicsItem):
         selected = menu.exec(event.screenPos())
 
         if selected == cfg:
-            ModuleConfigDialog(self).exec()
+            ModuleConfigDialog(self, self.scene().views()[0].window()).exec()
         elif selected == delete and self.scene():
             self.scene().remove_module(self)
 
     def set_direction(self, direction):
         self.direction = direction
         self.update()
+        
+    def build_lncv_map(self):
+        profile = MODULE_PROFILES[self.profile_key]
+        result = {}
+
+        for cv, field_name in profile["lncvs"].items():
+            result[cv] = self.lncv_values.get(field_name, 0)
+
+        return result
+
+    def get_article(self):
+        return MODULE_PROFILES[self.profile_key]["article"]
 
     def itemChange(self, change, value):
         if change == QGraphicsItem.ItemPositionChange and self.scene():

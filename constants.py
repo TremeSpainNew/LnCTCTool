@@ -22,25 +22,31 @@ class ModuleKind(Enum):
     TURNOUT = "Desvío"
     CROSS_TURNOUT = "Desvío cruzado"
     SIGNAL = "Señal"
-    SHUNT_SIGNAL = "Señal maniobra"
     RM = "RM"
     BUTTON = "Botón"
-
+    ACCESSORY = "Accesorio"
 
 class TurnoutVariant(Enum):
-    L_UP = "Izq. arriba"
-    L_UP_R_DOWN = "Izq. arriba + Der. abajo"
-    L_DOWN = "Izq. abajo"
-    L_DOWN_R_UP = "Izq. abajo + Der. arriba"
+    LEFT_UP = "Izquierda arriba"
+    LEFT_DOWN = "Izquierda abajo"
+    RIGHT_UP = "Derecha arriba"
+    RIGHT_DOWN = "Derecha abajo"
 
-    R_DOWN = "Der. abajo"
-    L_UP_R_DOWN_FULL = "Diagonal izq. arriba → der. abajo"
+    LEFT_UP_LEFT_DOWN = "Izq. arriba + Izq. abajo"
+    RIGHT_UP_RIGHT_DOWN = "Der. arriba + Der. abajo"
 
-    R_UP = "Der. arriba"
-    L_DOWN_R_UP_FULL = "Diagonal izq. abajo → der. arriba"
+    LEFT_UP_RIGHT_DOWN = "Izq. arriba + Der. abajo"
+    LEFT_DOWN_RIGHT_UP = "Izq. abajo + Der. arriba"
 
-    BOTH_UP_DOWN = "Izq. arriba + Der. abajo completo"
-    BOTH_DOWN_UP = "Izq. abajo + Der. arriba completo"
+    DIAGONAL_UP = "Diagonal ascendente"
+    DIAGONAL_DOWN = "Diagonal descendente"
+
+    CROSS = "Cruzado"
+    
+class AccessoryVariant(Enum):
+    BARRIER_TOP = "Barrera superior"
+    BARRIER_BOTTOM = "Barrera inferior"
+    CONTROL_MARK = "Control / marca"
     
 class Direction(Enum):
     LEFT_TO_RIGHT = "Izquierda → Derecha"
@@ -49,12 +55,15 @@ class Direction(Enum):
 SIGNAL_VARIANTS = {
     "Señales 2 focos": [
         ("Verde/Rojo", ["green", "red"], "normal"),
-        ("Amarillo/Rojo", ["yellow", "red"], "normal"),
+        ("Rojo/Verde", ["red", "green"], "normal"),
+        ("Rojo/Amarillo", ["red", "yellow"], "normal"),
+        ("Rojo/Blanco", ["red", "white"], "normal"),
         ("Verde/Amarillo", ["green", "yellow"], "normal"),
     ],
 
     "Señales 3 focos": [
         ("Verde/Rojo/Amarillo", ["green", "red", "yellow"], "normal"),
+        ("Rojo/Verde/Amarillo", ["red", "green", "yellow"], "normal"),
     ],
 
     "Señales 4 focos": [
@@ -63,45 +72,31 @@ SIGNAL_VARIANTS = {
 
     "Mono bajo / maniobra": [
         (
-            "Rojo/Blanco",
-            [("red", 0, 0), ("white", 1, 0)],
-            "mono_bajo"
-        ),
-        (
-            "Rojo/Verde/Amarillo",
-            [
-                ("red", 0, 0),
-                ("green", 1, 0),
-                ("yellow", 0, 1),
-            ],
-            "mono_bajo"
-        ),
-        (
-            "Verde/Amarillo/Rojo",
-            [
-                ("green", 0, 0),
-                ("yellow", 1, 0),
-                ("red", 0, 1),
-            ],
-            "mono_bajo"
-        ),
-        (
-            "Rojo/Blanco/Blanco/Blanco",
-            [
-                ("white", 0, 0),
-                ("white", 1, 0),
-                ("red", 0, 1),
-                ("white", 1, 1),
-            ],
-            "mono_bajo"
-        ),
-        (
-            "Rojo/Blanco/Verde/Amarillo",
+            "Mono bajo Rojo/Blanco/Verde/Amarillo",
             [
                 ("red", 0, 0),
                 ("white", 1, 0),
                 ("green", 0, 1),
                 ("yellow", 1, 1),
+            ],
+            "mono_bajo"
+        ),
+        (
+            "Mono bajo Rojo/Verde/Amarillo",
+            [
+                ("red", 0, 0),
+                ("green", 0, 1),
+                ("yellow", 1, 1),
+            ],
+            "mono_bajo"
+        ),
+        (
+            "Mono bajo Rojo/Blanco/Blanco/Blanco",
+            [
+                ("red", 0, 0),
+                ("white", 1, 0),
+                ("white", 0, 1),
+                ("white", 1, 1),
             ],
             "mono_bajo"
         ),
