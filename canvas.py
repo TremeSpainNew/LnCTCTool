@@ -3,7 +3,7 @@ from PySide6.QtCore import Qt
 
 from constants import GRID_SIZE
 from grid_scene import GridScene
-from modules import TrackModule, TurnoutModule, SignalModule, RMModule, ButtonModule, AccessoryModule
+from modules import TrackModule, TurnoutModule, SignalModule, RMModule, ButtonModule, AccessoryModule, CurveModule
 
 
 class Canvas(QGraphicsView):
@@ -49,7 +49,8 @@ class Canvas(QGraphicsView):
             item = ButtonModule(col, row)
         elif text == "Accesorio":
             item = AccessoryModule(col, row)
-
+        elif text == "Curva":
+            item = CurveModule(col, row)
         if item and not self.grid_scene.add_module(item):
             print("Zona ocupada, no se puede colocar ahí.")
 

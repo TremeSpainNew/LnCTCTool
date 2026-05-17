@@ -25,6 +25,7 @@ class ModuleKind(Enum):
     RM = "RM"
     BUTTON = "Botón"
     ACCESSORY = "Accesorio"
+    CURVE = "Curva"
 
 class TurnoutVariant(Enum):
     LEFT_UP = "Izquierda arriba"

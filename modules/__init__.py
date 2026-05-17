@@ -4,3 +4,4 @@ from modules.signal_module import SignalModule
 from modules.rm_module import RMModule
 from modules.button_module import ButtonModule
 from modules.accessory_module import AccessoryModule
+from modules.curve_module import CurveModule

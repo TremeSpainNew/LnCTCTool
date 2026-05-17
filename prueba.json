@@ -3,17 +3,75 @@
   "type": "loconet_planning",
   "modules": [
     {
+      "kind": "CURVE",
+      "col": 28,
+      "row": 5,
+      "name": "C",
+      "direction": "LEFT_TO_RIGHT",
+      "profile_key": null,
+      "lncv_values": {}
+    },
+    {
+      "kind": "CURVE",
+      "col": 19,
+      "row": 5,
+      "name": "C",
+      "direction": "LEFT_TO_RIGHT",
+      "profile_key": null,
+      "lncv_values": {}
+    },
+    {
       "kind": "SIGNAL",
-      "col": 21,
-      "row": 10,
-      "name": "E1",
+      "col": 31,
+      "row": 5,
+      "name": "M1",
       "direction": "LEFT_TO_RIGHT",
       "profile_key": "signal",
       "lncv_values": {
         "module_addr": 1,
         "signal_addr_1": 4,
-        "signal_addr_2": 5,
-        "signal_addr_3": 6,
+        "signal_addr_2": 0,
+        "signal_addr_3": 0,
+        "signal_type": 3,
+        "signal_group": 0
+      },
+      "signal_name": "Rojo/Blanco",
+      "signal_colors": [
+        "red",
+        "white"
+      ],
+      "signal_style": "normal"
+    },
+    {
+      "kind": "TURNOUT",
+      "col": 25,
+      "row": 7,
+      "name": "A3",
+      "direction": "LEFT_TO_RIGHT",
+      "profile_key": "turnout",
+      "lncv_values": {
+        "module_addr": 1,
+        "turnout_addr_1": 10,
+        "turnout_addr_2": 11,
+        "type": 0,
+        "invert_dir": 0,
+        "invert_fb": 0,
+        "has_feedback": 1
+      },
+      "variant": "RIGHT_UP"
+    },
+    {
+      "kind": "SIGNAL",
+      "col": 31,
+      "row": 7,
+      "name": "E2",
+      "direction": "LEFT_TO_RIGHT",
+      "profile_key": "signal",
+      "lncv_values": {
+        "module_addr": 1,
+        "signal_addr_1": 1,
+        "signal_addr_2": 2,
+        "signal_addr_3": 3,
         "signal_type": 7,
         "signal_group": 0
       },
@@ -25,6 +83,122 @@
         "white"
       ],
       "signal_style": "normal"
+    },
+    {
+      "kind": "TRACK",
+      "col": 28,
+      "row": 7,
+      "name": "",
+      "direction": "LEFT_TO_RIGHT",
+      "profile_key": null,
+      "lncv_values": {}
+    },
+    {
+      "kind": "TURNOUT",
+      "col": 22,
+      "row": 7,
+      "name": "A2",
+      "direction": "LEFT_TO_RIGHT",
+      "profile_key": "turnout",
+      "lncv_values": {
+        "module_addr": 1,
+        "turnout_addr_1": 10,
+        "turnout_addr_2": 11,
+        "type": 0,
+        "invert_dir": 0,
+        "invert_fb": 0,
+        "has_feedback": 1
+      },
+      "variant": "LEFT_UP"
+    },
+    {
+      "kind": "SIGNAL",
+      "col": 16,
+      "row": 7,
+      "name": "S1/1",
+      "direction": "RIGHT_TO_LEFT",
+      "profile_key": "signal",
+      "lncv_values": {
+        "module_addr": 1,
+        "signal_addr_1": 4,
+        "signal_addr_2": 5,
+        "signal_addr_3": 6,
+        "signal_type": 8,
+        "signal_group": 1
+      },
+      "signal_name": "Mono bajo Rojo/Blanco/Verde/Amarillo",
+      "signal_colors": [
+        [
+          "red",
+          0,
+          0
+        ],
+        [
+          "white",
+          1,
+          0
+        ],
+        [
+          "green",
+          0,
+          1
+        ],
+        [
+          "yellow",
+          1,
+          1
+        ]
+      ],
+      "signal_style": "mono_bajo"
+    },
+    {
+      "kind": "TRACK",
+      "col": 19,
+      "row": 7,
+      "name": "",
+      "direction": "LEFT_TO_RIGHT",
+      "profile_key": null,
+      "lncv_values": {}
+    },
+    {
+      "kind": "SIGNAL",
+      "col": 16,
+      "row": 5,
+      "name": "S1/2",
+      "direction": "RIGHT_TO_LEFT",
+      "profile_key": "signal",
+      "lncv_values": {
+        "module_addr": 1,
+        "signal_addr_1": 1,
+        "signal_addr_2": 2,
+        "signal_addr_3": 3,
+        "signal_type": 8,
+        "signal_group": 1
+      },
+      "signal_name": "Mono bajo Rojo/Blanco/Verde/Amarillo",
+      "signal_colors": [
+        [
+          "red",
+          0,
+          0
+        ],
+        [
+          "white",
+          1,
+          0
+        ],
+        [
+          "green",
+          0,
+          1
+        ],
+        [
+          "yellow",
+          1,
+          1
+        ]
+      ],
+      "signal_style": "mono_bajo"
     }
   ]
 }

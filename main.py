@@ -69,6 +69,7 @@ class MainWindow(QMainWindow):
             "RM",
             "Botón",
             "Accesorio",
+            "Curva",
         ])
         self.palette.setDragEnabled(True)
 
@@ -188,70 +189,70 @@ class MainWindow(QMainWindow):
     def configure_loconet(self):
         dialog = QDialog(self)
         dialog.setWindowTitle("Configuración LocoNet")
-    
+
         layout = QVBoxLayout(dialog)
         form = QFormLayout()
         layout.addLayout(form)
-    
+
         bridge_host_edit = QLineEdit(self.bridge_host)
         bridge_port_edit = QLineEdit(str(self.bridge_port))
-    
+
         form.addRow("Host bridge:", bridge_host_edit)
         form.addRow("Puerto bridge:", bridge_port_edit)
-    
+
         mode_combo = QComboBox()
         mode_combo.addItems(["tcp", "serial"])
         mode_combo.setCurrentText(self.loconet_mode)
         form.addRow("Modo:", mode_combo)
-    
+
         tcp_ip_edit = QLineEdit(self.loconet_ip)
         tcp_port_edit = QLineEdit(str(self.loconet_port))
-    
+
         form.addRow("IP LocoNet:", tcp_ip_edit)
         form.addRow("Puerto LocoNet:", tcp_port_edit)
-    
+
         ports = [p.device for p in serial.tools.list_ports.comports()]
         if not ports:
             ports = [self.com_port]
-    
+
         com_combo = QComboBox()
         com_combo.addItems(ports)
         com_combo.setCurrentText(self.com_port)
-    
+
         form.addRow("Puerto COM:", com_combo)
-    
+
         buttons = QDialogButtonBox(
             QDialogButtonBox.Ok | QDialogButtonBox.Cancel
         )
         layout.addWidget(buttons)
-    
+
         buttons.accepted.connect(dialog.accept)
         buttons.rejected.connect(dialog.reject)
-    
+
         def update_mode():
             is_tcp = mode_combo.currentText() == "tcp"
             tcp_ip_edit.setEnabled(is_tcp)
             tcp_port_edit.setEnabled(is_tcp)
             com_combo.setEnabled(not is_tcp)
-    
+
         mode_combo.currentTextChanged.connect(update_mode)
         update_mode()
-    
+
         if dialog.exec() != QDialog.Accepted:
             return
-    
+
         self.bridge_host = bridge_host_edit.text()
         self.bridge_port = int(bridge_port_edit.text())
-    
+
         self.loconet_mode = mode_combo.currentText()
-    
+
         self.loconet_ip = tcp_ip_edit.text()
         self.loconet_port = int(tcp_port_edit.text())
-    
+
         self.com_port = com_combo.currentText()
-    
+
         self.save_loconet_config()
-    
+
         QMessageBox.information(
             self,
             "LocoNet",
